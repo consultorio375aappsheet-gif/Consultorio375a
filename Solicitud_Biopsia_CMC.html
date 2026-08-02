@@ -60,6 +60,7 @@
         <section class="patient-data">
             <p class="full-width"><strong>Nombre y Apellido:</strong> <span id="n"></span></p>
             <p><strong>C.I:</strong> <span id="c"></span></p>
+            <p><strong>F. N.:</strong> <span id="fn"></span></p>
             <p><strong>Edad:</strong> <span id="e"></span></p>
             <p><strong>Sexo:</strong> <span id="sx"></span></p>
             <p><strong>Teléfono:</strong> <span id="tel"></span></p>
@@ -90,7 +91,7 @@
             </div>
         </main>
 
-        </div>
+    </div>
 
     <div class="button-container no-print">
         <button class="btn btn-print" onclick="window.print()">Imprimir PDF</button>
@@ -100,9 +101,18 @@
     <script>
     const params = new URLSearchParams(window.location.search);
 
-    // Función de procesamiento seguro para evitar campos vacíos o "null"
-    function procesarCampo(paramId, elementId) {
-        const valor = params.get(paramId);
+    // Función de procesamiento seguro que admite clave única o lista de claves
+    function procesarCampo(paramKeys, elementId) {
+        let valor = null;
+        if (Array.isArray(paramKeys)) {
+            for (let key of paramKeys) {
+                valor = params.get(key);
+                if (valor) break;
+            }
+        } else {
+            valor = params.get(paramKeys);
+        }
+        
         const el = document.getElementById(elementId);
         if (el) {
             el.innerText = (valor && valor.toLowerCase() !== "null") ? valor : "";
@@ -110,18 +120,19 @@
     }
 
     // Mapeo de parámetros de AppSheet
-    procesarCampo('f', 'fecha');
-    procesarCampo('n', 'n');
-    procesarCampo('c', 'c');
-    procesarCampo('e', 'e');
-    procesarCampo('sx', 'sx');
-    procesarCampo('tel', 'tel');
-    procesarCampo('dir', 'dir');
-    procesarCampo('m', 'muestra');
-    procesarCampo('ev', 'evolucion');
-    procesarCampo('sl', 'sitio');
-    procesarCampo('ic', 'info-clinica');
-    procesarCampo('dc', 'diag-clinico');
+    procesarCampo(['f', 'Fecha'], 'fecha');
+    procesarCampo(['n', 'Nombre_Apellido'], 'n');
+    procesarCampo(['c', 'Cedula'], 'c');
+    procesarCampo(['fn', 'F_N', 'F/N', 'Fecha_Nacimiento'], 'fn');
+    procesarCampo(['e', 'Edad'], 'e');
+    procesarCampo(['sx', 'Sexo'], 'sx');
+    procesarCampo(['tel', 'Telefono'], 'tel');
+    procesarCampo(['dir', 'Direccion'], 'dir');
+    procesarCampo(['m', 'Muestra'], 'muestra');
+    procesarCampo(['ev', 'Evolucion'], 'evolucion');
+    procesarCampo(['sl', 'Sitio'], 'sitio');
+    procesarCampo(['ic', 'Info_Clinica'], 'info-clinica');
+    procesarCampo(['dc', 'Diag_Clinico'], 'diag-clinico');
 
     function exportToWord() {
         var node = document.getElementById("exportContent");
