@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Laboratorio CMC - Innova Med</title>
+    <style>
+        body { font-family: 'Times New Roman', Times, serif; background-color: #f4f4f4; padding: 20px; color: #000; display: flex; flex-direction: column; align-items: center; }
+        .document-container { background-color: white; width: 816px; min-height: 1056px; margin: 20px auto; padding: 40px 60px; box-shadow: 0 0 10px rgba(0,0,0,0.1); box-sizing: border-box; }
+        
+        /* Encabezado CMC */
+        .header-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        .logo-cell { width: 40%; vertical-align: middle; }
+        .logo-cell img { width: 100%; max-width: 260px; height: auto; display: block; }
+        .info-cell { width: 60%; vertical-align: middle; text-align: center; }
+        .main-title { font-family: Arial, sans-serif; font-size: 15pt; margin: 0; font-weight: bold; color: #666666; }
+        .sub-title { font-family: Arial, sans-serif; font-size: 12pt; margin: 0; color: #666666; }
+
+        /* Datos del Paciente */
+        .patient-data { margin: 25px 0; font-size: 11pt; line-height: 1.3; position: relative; border-bottom: 1.5pt solid #000; padding-bottom: 10px; }
+        .fecha-top { position: absolute; right: 0; top: 0; font-weight: bold; }
+        .title-doc { text-align: center; font-size: 16pt; font-weight: bold; text-decoration: underline; margin: 20px 0; text-transform: uppercase; }
+
+        /* Grilla de Laboratorios */
+        .labs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+        
+        table.lab-table { width: 100%; border-collapse: collapse; margin-bottom: 15pt; font-size: 9.5pt; }
+        table.lab-table th, table.lab-table td { border: 1px solid black; padding: 3px 6px; }
+        table.lab-table th { background-color: #f2f2f2; font-weight: bold; text-align: center; }
+        .check-cell { width: 35px; text-align: center; font-weight: bold; font-size: 12pt; height: 18px; }
+
+        /* Botón de Impresión */
+        .button-container { margin: 20px; display: flex; justify-content: center; }
+        .btn-print { padding: 12px 35px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; color: white; background-color: #27649d; font-size: 11pt; }
+
+        @media print { 
+            .no-print { display: none; } 
+            body { background-color: white; padding: 0; }
+            .document-container { box-shadow: none; margin: 0; width: 100% !important; padding: 40px 60px; } 
+        }
+    </style>
+</head>
+<body>
+    <div class="document-container">
+        <table class="header-table">
+            <tr>
+                <td class="logo-cell"><img src="https://lh3.googleusercontent.com/d/1AG-tPiSsSS3lK2I1X3qFj7iWVh0oC1bF" alt="Logo CMC"></td>
+                <td class="info-cell">
+                    <div class="main-title">DRA. ELIZABETH BALL DE PICÓN</div>
+                    <div class="sub-title">Médico Dermatólogo y Dermatopatólogo</div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="patient-data">
+            <div class="fecha-top">Fecha: <span id="val-Fecha"></span></div>
+            <div><strong>Nombre y Apellido:</strong> <span id="val-Nombre"></span></div>
+            <div><strong>CI:</strong> <span id="val-Cedula"></span></div>
+            <div><strong>Edad:</strong> <span id="val-Edad"></span></div>
+        </div>
+
+        <div class="title-doc">Solicitud Examen Laboratorio</div>
+
+        <div class="labs-grid">
+            <div>
+                <table class="lab-table">
+                    <tr><td class="check-cell" id="val-Hemato"></td><td style="font-weight:bold;">Hematología Completa</td></tr>
+                </table>
+                <table class="lab-table">
+                    <tr><th colspan="2">Química sanguínea</th></tr>
+                    <tr><td class="check-cell" id="val-Glicemia"></td><td>Glicemia en Ayunas</td></tr>
+                    <tr><td class="check-cell" id="val-Urea"></td><td>Urea y creatinina</td></tr>
+                    <tr><td class="check-cell" id="val-AST"></td><td>AST / ALT</td></tr>
+                    <tr><td class="check-cell" id="val-Bilirrubina"></td><td>Bilirrubina T y F</td></tr>
+                    <tr><td class="check-cell" id="val-Colesterol"></td><td>Colesterol y Triglicéridos</td></tr>
+                    <tr><td class="check-cell" id="val-LDH"></td><td>LDH</td></tr>
+                    <tr><td class="check-cell" id="val-CK"></td><td>CK</td></tr>
+                </table>
+                <table class="lab-table">
+                    <tr><th colspan="2">Perfil Hormonal (Día 2-4 del ciclo)</th></tr>
+                    <tr><td class="check-cell" id="val-Estradiol"></td><td>Estradiol</td></tr>
+                    <tr><td class="check-cell" id="val-Andros"></td><td>Androstenediona</td></tr>
+                    <tr><td class="check-cell" id="val-Testo"></td><td>Testosterona T y L</td></tr>
+                    <tr><td class="check-cell" id="val-17OH"></td><td>17-OH Progesterona</td></tr>
+                    <tr><td class="check-cell" id="val-DHEA"></td><td>DHEA-S</td></tr>
+                    <tr><td class="check-cell" id="val-LH"></td><td>LH</td></tr>
+                    <tr><td class="check-cell" id="val-FSH"></td><td>FSH</td></tr>
+                    <tr><td class="check-cell" id="val-Prolactina"></td><td>Prolactina</td></tr>
+                    <tr><td class="check-cell" id="val-SHGB"></td><td>SHGB</td></tr>
+                </table>
+            </div>
+
+            <div>
+                <table class="lab-table">
+                    <tr><th colspan="2">Perfil Tiroideo</th></tr>
+                    <tr><td class="check-cell" id="val-TSH"></td><td>TSH</td></tr>
+                    <tr><td class="check-cell" id="val-T3L"></td><td>T3L</td></tr>
+                    <tr><td class="check-cell" id="val-T4L"></td><td>T4L</td></tr>
+                    <tr><td class="check-cell" id="val-Anticuerpos"></td><td>Anticuerpos Antitiroideos</td></tr>
+                </table>
+                <table class="lab-table">
+                    <tr><th colspan="2">Serología</th></tr>
+                    <tr><td class="check-cell" id="val-HIV"></td><td>HIV</td></tr>
+                    <tr><td class="check-cell" id="val-VDRL"></td><td>VDRL</td></tr>
+                </table>
+                <table class="lab-table">
+                    <tr><th colspan="2">Orina</th></tr>
+                    <tr><td class="check-cell" id="val-Uroanalisis"></td><td>Uroanálisis</td></tr>
+                    <tr><td class="check-cell" id="val-Urocultivo"></td><td>Urocultivo</td></tr>
+                </table>
+                <table class="lab-table">
+                    <tr><th colspan="2">Heces</th></tr>
+                    <tr><td class="check-cell" id="val-Coproanalisis"></td><td>Coproanálisis</td></tr>
+                    <tr><td class="check-cell" id="val-Coprocultivo"></td><td>Coprocultivo</td></tr>
+                </table>
+                <table class="lab-table">
+                    <tr><th colspan="2">Otros</th></tr>
+                    <tr><td class="check-cell" id="val-Insulina"></td><td>Insulina Basal</td></tr>
+                    <tr><td class="check-cell" id="val-Ferritina"></td><td>Niveles de ferritina</td></tr>
+                    <tr><td class="check-cell" id="val-Hierro"></td><td>Hierro Sérico</td></tr>
+                    <tr><td class="check-cell" id="val-VitB12"></td><td>Niveles de Vit B12</td></tr>
+                    <tr><td class="check-cell" id="val-AcidoFolico"></td><td>Niveles de Ácido Fólico</td></tr>
+                    <tr><td class="check-cell" id="val-Otros"></td><td>Otros: <span id="val-OtrosText"></span></td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="button-container no-print">
+        <button class="btn-print" onclick="window.print()">Imprimir / PDF</button>
+    </div>
+
+    <script>
+    const params = new URLSearchParams(window.location.search);
+    
+    function setCheck(id, param) {
+        let val = params.get(param);
+        if (val && val.trim() !== "") {
+            let cleanVal = val.toUpperCase().trim();
+            if (cleanVal === 'X' || cleanVal === 'YES' || cleanVal === 'TRUE' || cleanVal === 'Y') {
+                const el = document.getElementById(id);
+                if(el) el.innerText = 'X';
+            }
+        }
+    }
+
+    // Carga de datos
+    document.getElementById('val-Fecha').innerText = params.get('f') || '';
+    document.getElementById('val-Nombre').innerText = params.get('n') || '';
+    document.getElementById('val-Cedula').innerText = params.get('c') || '';
+    document.getElementById('val-Edad').innerText = params.get('e') || '';
+    document.getElementById('val-OtrosText').innerText = params.get('ot') || '';
+
+    // Marcar las X
+    setCheck('val-Hemato', 'h'); setCheck('val-Glicemia', 'ga'); setCheck('val-Urea', 'uc');
+    setCheck('val-AST', 'ast'); setCheck('val-Bilirrubina', 'btf'); setCheck('val-Colesterol', 'ct');
+    setCheck('val-LDH', 'ldh'); setCheck('val-CK', 'ck'); setCheck('val-TSH', 'tsh');
+    setCheck('val-T3L', 't3l'); setCheck('val-T4L', 't4l'); setCheck('val-Anticuerpos', 'aa');
+    setCheck('val-HIV', 'hiv'); setCheck('val-VDRL', 'vdrl'); setCheck('val-Uroanalisis', 'ua');
+    setCheck('val-Urocultivo', 'ucul'); setCheck('val-Coproanalisis', 'ca'); setCheck('val-Coprocultivo', 'cc');
+    setCheck('val-Estradiol', 'est'); setCheck('val-Andros', 'and'); setCheck('val-Testo', 'tes');
+    setCheck('val-17OH', '17oh'); setCheck('val-DHEA', 'dhea'); setCheck('val-LH', 'lh');
+    setCheck('val-FSH', 'fsh'); setCheck('val-Prolactina', 'pro'); setCheck('val-SHGB', 'shgb');
+    setCheck('val-Insulina', 'ins'); setCheck('val-Ferritina', 'fer'); setCheck('val-Hierro', 'hie');
+    setCheck('val-VitB12', 'b12'); setCheck('val-AcidoFolico', 'af');
+    </script>
+</body>
+</html>
