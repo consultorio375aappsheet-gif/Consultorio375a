@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Informe Médico - Innova Med</title>
+    <style>
+        body { font-family: 'Times New Roman', Times, serif; line-height: 1.1; background-color: #f4f4f4; padding: 20px; color: #000; display: flex; flex-direction: column; align-items: center; }
+        .document-container { background-color: white; width: 816px; min-height: 1056px; margin: 20px auto; padding: 30px 60px; box-shadow: 0 0 10px rgba(0,0,0,0.1); box-sizing: border-box; display: flex; flex-direction: column; position: relative; }
+        
+        /* Encabezado Profesional */
+        .header-table { width: 100%; border-collapse: collapse; margin-bottom: 5px; }
+        .logo-cell { width: 35%; vertical-align: middle; }
+        .logo-cell img { width: 100%; max-width: 240px; height: auto; display: block; }
+        .info-cell { width: 65%; vertical-align: middle; text-align: center; }
+        
+        .main-title { font-family: Arial, sans-serif; font-size: 12pt; margin: 0; line-height: 1.0; color: #666666; font-weight: bold; }
+        .sub-title { font-family: Arial, sans-serif; font-size: 11pt; margin: 2pt 0; line-height: 1.0; color: #666666; }
+        
+        /* Línea Divisoria Gruesa */
+        .header-divider { border-top: 2.5pt solid #666666; margin: 5pt 0; width: 100%; height: 1px; }
+        
+        .bottom-info { font-family: Arial, sans-serif; font-size: 9pt; line-height: 1.2; color: #666666; }
+
+        .date-row { text-align: right; margin-top: 10px; margin-bottom: 10px; font-weight: bold; width: 100%; }
+        
+        /* Datos del Paciente Compactos */
+        .patient-data { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-bottom: 15px; font-size: 0.95em; border-bottom: 1pt solid #eee; padding-bottom: 10px; }
+        .full-width { grid-column: span 2; }
+        .patient-data p { margin: 0 !important; padding: 0 !important; line-height: 1.1; }
+        
+        .doc-title { text-align: center; font-size: 1.2em; text-decoration: underline; margin: 15px 0; font-weight: bold; text-transform: none !important; }
+        .clinical-block { margin-bottom: 6pt !important; text-align: left; }
+        
+        .button-container { margin-top: 20px; display: flex; justify-content: center; gap: 15px; }
+        .btn { padding: 10px 20px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; }
+        .btn-print { background-color: #27649d; color: white; }
+        .btn-word { background-color: #2b579a; color: white; }
+
+        @media print { 
+            @page { margin: 0; }
+            .no-print { display: none; } 
+            .document-container { box-shadow: none; margin: 0; padding: 10px 60px 80px 60px; min-height: 100%; width: 100%; box-sizing: border-box; }
+        }
+    </style>
+</head>
+<body>
+    <div id="exportContent" class="document-container">
+        <table class="header-table">
+            <tr>
+                <td class="logo-cell"><img src="https://lh3.googleusercontent.com/d/1AG-tPiSsSS3lK2I1X3qFj7iWVh0oC1bF" alt="Logo"></td>
+                <td class="info-cell">
+                    <div class="main-title">DRA. ELIZABETH BALL DE PICÓN</div>
+                    <div class="sub-title">Médico Dermatólogo y Dermatopatólogo</div>
+                    <div class="header-divider"></div>
+                    <div class="bottom-info">
+                        Centro Médico de Caracas. San Bernardino. Anexo A. Piso 3. Oficina 375A<br>
+                        Tlf: 0212-5517366 / 0424-1273432 / WhatsApp: 04269198665<br>
+                     </div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="date-row">Fecha: <span id="fecha"></span></div>
+
+        <section class="patient-data">
+            <p class="full-width"><strong>Paciente:</strong> <span id="n"></span></p>
+            <p><strong>C.I:</strong> <span id="c"></span></p>
+            <p><strong>Edad:</strong> <span id="e"></span></p>
+            <p><strong>Telf:</strong> <span id="tel"></span></p>
+            <p><strong>Ocupación:</strong> <span id="ocu"></span></p>
+            <p class="full-width"><strong>Dirección:</strong> <span id="dir"></span></p>
+        </section>
+
+        <h1 class="doc-title">Informe Médico</h1>
+        
+        <div class="clinical-block"><strong>Motivo de consulta:</strong> <span id="mot"></span></div>
+        <div class="clinical-block"><strong>Antecedentes personales:</strong> <span id="antp"></span></div>
+        <div class="clinical-block" id="wrap-ale"><strong>Alergias:</strong> <span id="ale"></span><span id="wrap-alesp"> (Especifique: <span id="alesp"></span>)</span></div>
+        <div class="clinical-block" id="wrap-qui"><strong>Quirúrgicos:</strong> <span id="qui"></span><span id="wrap-quiesp"> (Especifique: <span id="quiesp"></span>)</span></div>
+        <div class="clinical-block"><span id="exf"></span></div>
+        
+        <div class="clinical-block">
+            <span id="wrap-fot"><strong>Fototipo:</strong> <span id="fot"></span> | </span>
+            <span id="wrap-tur"><strong>Turgor:</strong> <span id="tur"></span> | </span>
+            <span id="wrap-pie"><strong>Piel:</strong> <span id="pie"></span></span>
+        </div>
+        
+        <div class="clinical-block">
+            <span id="wrap-uñ"><strong>Uñas:</strong> <span id="uñ"></span> | </span>
+            <span id="wrap-pel"><strong>Pelo:</strong> <span id="pel"></span></span>
+        </div>
+
+        <div class="clinical-block"><strong>Diagnósticos:</strong> <span id="diag"></span></div>
+        <div class="clinical-block"><strong>Tratamiento/Conducta:</strong> <span id="tra"></span></div>
+        <div id="wrap-pla" class="clinical-block"><strong>Plan/Sugerencias:</strong> <span id="pla"></span></div>
+
+        <div id="wrap-mic" class="clinical-block"><strong>Micológico/Parasitológico:</strong> <span id="mic"></span> <span id="micesp"></span></div>
+        <div id="wrap-lab" class="clinical-block"><strong>Laboratorios:</strong> <span id="lab"></span> <span id="labesp"></span></div>
+        
+        <div style="margin-top:10px;">
+            <div id="wrap-con" class="clinical-block"><strong>Control:</strong> <span id="con"></span></div>
+            <div id="wrap-not" class="clinical-block"><strong>Nota:</strong> <span id="not"></span></div>
+        </div>
+    </div>
+
+    <div class="button-container no-print">
+        <button class="btn btn-print" onclick="window.print()">Imprimir PDF</button>
+        <button class="btn btn-word" onclick="exportToWord()">Descargar Word</button>
+    </div>
+
+    <script>
+    // Función integrada para transformar la fecha a formato en español (dd/mm/aaaa) sin error de zona horaria
+    function formatearFechaEspañol(fechaStr) {
+        if (!fechaStr) return '';
+        
+        const fechaObjeto = new Date(fechaStr.replace(/-/g, '\/'));
+        
+        if (isNaN(fechaObjeto.getTime())) {
+            return fechaStr;
+        }
+
+        const dia = String(fechaObjeto.getDate()).padStart(2, '0');
+        const mes = String(fechaObjeto.getMonth() + 1).padStart(2, '0');
+        const anio = fechaObjeto.getFullYear();
+
+        return `${dia}/${mes}/${anio}`;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+
+    function procesarCampo(paramId, wrapId = null) {
+        const valor = params.get(paramId);
+        const campoElemento = document.getElementById(paramId);
+        const wrapElemento = wrapId ? document.getElementById(wrapId) : null;
+        if (valor && valor.trim() !== "" && valor.toLowerCase() !== "null") {
+            if (campoElemento) campoElemento.innerText = valor;
+        } else {
+            if (wrapElemento) wrapElemento.style.display = "none";
+        }
+    }
+
+    // Llenado de datos con el formateador de fecha integrado
+    const fechaOriginal = params.get('fecha') || '';
+    document.getElementById('fecha').innerText = formatearFechaEspañol(fechaOriginal);
+    
+    document.getElementById('n').innerText = params.get('n') || '';
+    document.getElementById('c').innerText = params.get('c') || '';
+    document.getElementById('e').innerText = params.get('e') || '';
+    document.getElementById('tel').innerText = params.get('tel') || '';
+    document.getElementById('dir').innerText = params.get('dir') || '';
+    document.getElementById('ocu').innerText = params.get('ocu') || '';
+    document.getElementById('mot').innerText = params.get('mot') || '';
+    document.getElementById('antp').innerText = params.get('antp') || '';
+    document.getElementById('ale').innerText = params.get('ale') || '';
+    document.getElementById('qui').innerText = params.get('qui') || '';
+    document.getElementById('exf').innerText = params.get('exf') || '';
+    document.getElementById('diag').innerText = params.get('diag') || '';
+    document.getElementById('tra').innerText = params.get('tra') || '';
+
+    procesarCampo('alesp', 'wrap-alesp');
+    procesarCampo('quiesp', 'wrap-quiesp');
+    procesarCampo('fot', 'wrap-fot');
+    procesarCampo('tur', 'wrap-tur');
+    procesarCampo('pie', 'wrap-pie');
+    procesarCampo('uñ', 'wrap-uñ');
+    procesarCampo('pel', 'wrap-pel');
+    procesarCampo('pla', 'wrap-pla');
+    procesarCampo('mic', 'wrap-mic');
+    procesarCampo('lab', 'wrap-lab');
+    procesarCampo('con', 'wrap-con');
+    procesarCampo('not', 'wrap-not');
+
+    function exportToWord() {
+        var node = document.getElementById("exportContent");
+        var exportElement = node.cloneNode(true);
+        
+        var hiddenElements = exportElement.querySelectorAll('[style*="display: none"]');
+        hiddenElements.forEach(el => el.remove());
+
+        var content = exportElement.innerHTML;
+        
+        // Ajuste de imagen y tabla para Word
+        content = content.replace(/<img/g, '<img width="240" height="85" style="display:block; margin-bottom:5pt;"');
+
+        var preHtml = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head>
+            <meta charset='utf-8'>
+            <!--[if gte mso 9]>
+        <xml>
+            <w:WordDocument>
+                <w:View>Print</w:View>
+                <w:Zoom>100</w:Zoom>
+                <w:DoNotOptimizeForBrowser/>
+            </w:WordDocument>
+        </xml>
+        <![endif]-->
+            <style>
+               @page Section1 { 
+                size: 8.5in 11in; 
+                margin: 1.0in 0.75in 1.0in 0.75in; /* 2.54cm y 1.91cm */
+                mso-header-margin: .5in; 
+                mso-footer-margin: .5in; 
+                mso-paper-source: 0; 
+            }
+            div.Section1 { page: Section1; }
+                body { font-family: 'Times New Roman', serif; font-size: 11pt; }
+                
+                /* Reset general para evitar espacios de Word */
+                p, div, span { margin: 0; padding: 0; line-height: 1.15; }
+
+                /* Tabla Encabezado */
+                .header-table { width: 100% !important; border-collapse: collapse; }
+                .logo-cell { width: 35%; vertical-align: middle; }
+                .info-cell { width: 65%; text-align: center; vertical-align: middle; }
+                
+                .main-title { font-family: Arial, sans-serif !important; font-size: 12pt !important; font-weight: bold; color: #666666 !important; }
+                .sub-title { font-family: Arial, sans-serif !important; font-size: 11pt !important; color: #666666 !important; }
+                
+                /* La línea en Word */
+                .header-divider { border-top: 2.5pt solid #666666; height: 1pt; margin: 5pt 0; }
+                .bottom-info { font-family: Arial, sans-serif !important; font-size: 8pt !important; color: #666666 !important; }
+
+                /* Fecha a la derecha forzada */
+                .date-row { text-align: right !important; font-weight: bold; margin: 10pt 0 !important; display: block; width: 100%; }
+
+                /* Datos Paciente Compactos */
+                .patient-data p { 
+                    margin-bottom: 0.1pt !important; 
+                    line-height: 1.0 !important;
+                    mso-line-height-rule: exactly; 
+                }
+
+                .doc-title { text-align: center !important; font-size: 14pt !important; font-weight: bold; text-decoration: underline; margin: 15pt 0 !important; }
+                .clinical-block { margin-bottom: 6pt !important; }
+            </style>
+        </head>
+        <body>
+            <div class="Section1">
+                ${content}
+            </div>
+        </body>
+        </html>`;
+
+        // Parches de alineación final
+        var finalContent = preHtml.replace(/class="info-cell"/g, 'class="info-cell" align="center"');
+        finalContent = finalContent.replace(/class="date-row"/g, 'class="date-row" align="right"');
+        finalContent = finalContent.replace(/class="doc-title"/g, 'class="doc-title" align="center"');
+
+        var blob = new Blob(['\ufeff', finalContent], { type: 'application/msword' });
+        var url = URL.createObjectURL(blob);
+        var filename = 'Informe_CMC_' + (document.getElementById('n').innerText || 'Paciente') + '.doc';
+        
+        var downloadLink = document.createElement("a");
+        document.body.appendChild(downloadLink);
+        downloadLink.href = url;
+        downloadLink.download = filename;
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+    }
+    </script>
+</body>
+</html>
