@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Solicitud de Estudios - Innova Med</title>
+    <style>
+        /* Base exacta del Informe Médico Perfecto */
+        body { font-family: 'Times New Roman', Times, serif; line-height: 1.1; background-color: #f4f4f4; padding: 20px; color: #000; display: flex; flex-direction: column; align-items: center; }
+        
+        .document-container { 
+            background-color: white; 
+            width: 816px; 
+            min-height: 1056px; 
+            margin: 20px auto; 
+            padding: 30px 60px; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+            box-sizing: border-box; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+        }
+        
+        /* Encabezado idéntico al informe perfecto */
+        .header-table { width: 100%; border-collapse: collapse; margin-bottom: 0px; }
+        .logo-cell { width: 50%; vertical-align: middle; padding-right: 0px; }
+        .logo-cell img { width: 100%; max-width: 300px; height: auto; display: block; }
+        .info-cell { width: 75%; vertical-align: middle; text-align: center; padding-left: 10px }
+        
+        .main-title { font-family: Arial, sans-serif; font-size: 15pt; margin: 0; line-height: 1.0; color: #666666; }
+        .sub-title { font-family: Arial, sans-serif; font-size: 12pt; margin: 0; line-height: 1.0; color: #666666; }
+
+        .date-row { text-align: right; margin-top: 5px; margin-bottom: 15px; font-weight: bold; width: 100%; }
+        
+        /* Datos del paciente con el mismo estilo compacto */
+        .patient-data { margin-bottom: 20px; font-size: 11pt; border-bottom: 1pt solid #eee; padding-bottom: 10px; }
+        .patient-data p { margin: 0 !important; padding: 0 !important; line-height: 1.2; }
+        
+        .doc-title { text-align: center; font-size: 1.3em; text-decoration: underline; margin: 25px 0; font-weight: bold; text-transform: none !important; }
+        
+        /* Bloques de contenido */
+        .clinical-block { margin-bottom: 12pt !important; text-align: left; font-size: 11pt; }
+        .clinical-block strong { display: block; margin-bottom: 3pt; }
+        .content-box { min-height: 20px; border-bottom: 1px solid #f0f0f0; padding-bottom: 5px; }
+
+        footer { margin-top: auto; padding-bottom: 40px; text-align: center; }
+        .signature-line { width: 200px; border-top: 1.5px solid #000; margin: 0 auto 5px; }
+
+        .button-container { margin-top: 20px; display: flex; justify-content: center; gap: 15px; }
+        .btn { padding: 10px 20px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; }
+        .btn-print { background-color: #27649d; color: white; }
+        .btn-word { background-color: #2b579a; color: white; }
+
+        /* Ajuste de impresión para corregir el margen derecho corrido */
+        @media print { 
+            @page { margin: 0; size: letter; }
+            .no-print { display: none; } 
+            body { background-color: white; padding: 0; margin: 0; }
+            .document-container { 
+                box-shadow: none; 
+                margin: 0; 
+                padding: 40px 60px; /* Margen simétrico para que no se corra */
+                width: 100% !important; 
+                max-width: 100%;
+                box-sizing: border-box; 
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="exportContent" class="document-container">
+        <!-- Encabezado -->
+        <table class="header-table">
+            <tr>
+                <td class="logo-cell"><img src="https://lh3.googleusercontent.com/d/1AG-tPiSsSS3lK2I1X3qFj7iWVh0oC1bF" alt="Logo"></td>
+                <td class="info-cell">
+                    <div class="main-title">DRA. ELIZABETH BALL DE PICÓN</div>
+                    <div class="sub-title">Médico Dermatólogo y Dermatopatólogo</div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="date-row">Fecha: <span id="fecha"></span></div>
+
+        <section class="patient-data">
+            <p><strong>Paciente:</strong> <span id="nombre"></span></p>
+            <p><strong>C.I.:</strong> <span id="cedula"></span></p>
+            <p><strong>Edad:</strong> <span id="edad"></span></p>
+        </section>
+
+        <main>
+            <h1 class="doc-title">Solicitud de estudios de Radiodiagnóstico</h1>
+            
+            <div class="clinical-block">
+                <strong>Información clínica:</strong>
+                <div id="info-clinica" class="content-box"></div>
+            </div>
+            
+            <div class="clinical-block">
+                <strong>Diagnóstico clínico:</strong>
+                <div id="diag-clinico" class="content-box"></div>
+            </div>
+            
+            <div class="clinical-block">
+                <strong>Estudio solicitado:</strong>
+                <div id="estudio" class="content-box"></div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="signature-line"></div>
+            <p>Firma y Sello Médico</p>
+        </footer>
+    </div>
+
+    <div class="button-container no-print">
+        <button class="btn btn-print" onclick="window.print()">Imprimir PDF</button>
+        <button class="btn btn-word" onclick="exportToWord()">Descargar Word</button>
+    </div>
+
+    <script>
+    const params = new URLSearchParams(window.location.search);
+
+    // Mapeo de parámetros según tu configuración de AppSheet
+    document.getElementById('fecha').innerText = params.get('f') || '';
+    document.getElementById('nombre').innerText = params.get('n') || '';
+    document.getElementById('cedula').innerText = params.get('c') || '';
+    document.getElementById('edad').innerText = params.get('e') || '';
+    document.getElementById('info-clinica').innerText = params.get('ic') || '';
+    document.getElementById('diag-clinico').innerText = params.get('dc') || '';
+    document.getElementById('estudio').innerText = params.get('s') || '';
+
+    function exportToWord() {
+        var node = document.getElementById("exportContent");
+        var exportElement = node.cloneNode(true);
+        var content = exportElement.innerHTML;
+
+        content = content.replace(/<img/g, '<img width="240" height="85" style="display:block; margin-bottom:5pt;"');
+
+        var preHtml = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head>
+            <meta charset='utf-8'>
+            <!--[if gte mso 9]>
+            <xml>
+                <w:WordDocument>
+                    <w:View>Print</w:View>
+                    <w:Zoom>100</w:Zoom>
+                    <w:DoNotOptimizeForBrowser/>
+                </w:WordDocument>
+            </xml>
+            <![endif]-->
+            <style>
+                @page Section1 { size: 8.5in 11in; margin: 0.5in 0.7in; }
+                div.Section1 { page: Section1; }
+                body { font-family: 'Times New Roman', serif; font-size: 11pt; }
+                p, div, span, strong { margin: 0in !important; margin-bottom: .0001pt !important; line-height: 1.15 !important; }
+                .header-table { width: 100% !important; }
+                .info-cell { text-align: center !important; }
+                .main-title { font-family: Arial, sans-serif !important; font-size: 15pt !important; color: #666666; text-align: center !important; }
+                .sub-title { font-family: Arial, sans-serif !important; font-size: 12pt !important; color: #666666; text-align: center !important; }
+                .date-row { text-align: right !important; font-weight: bold; margin: 10pt 0 !important; }
+                .doc-title { text-align: center !important; font-size: 14pt !important; font-weight: bold; text-decoration: underline; margin: 15pt 0 !important; }
+                footer { margin-top: 50pt !important; text-align: center !important; }
+            </style>
+        </head>
+        <body>
+            <div class="Section1">${content}</div>
+        </body>
+        </html>`;
+
+        var finalContent = preHtml.replace(/class="info-cell"/g, 'class="info-cell" align="center"');
+        finalContent = finalContent.replace(/class="doc-title"/g, 'class="doc-title" align="center"');
+        finalContent = finalContent.replace(/class="date-row"/g, 'class="date-row" align="right"');
+        finalContent = finalContent.replace(/class="main-title"/g, 'class="main-title" align="center"');
+        finalContent = finalContent.replace(/class="sub-title"/g, 'class="sub-title" align="center"');
+
+        var blob = new Blob(['\ufeff', finalContent], { type: 'application/msword' });
+        var url = URL.createObjectURL(blob);
+        var filename = 'Solicitud_' + (document.getElementById('nombre').innerText || 'Paciente') + '.doc';
+        var downloadLink = document.createElement("a");
+        document.body.appendChild(downloadLink);
+        downloadLink.href = url;
+        downloadLink.download = filename;
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+    }
+    </script>
+</body>
+</html>
