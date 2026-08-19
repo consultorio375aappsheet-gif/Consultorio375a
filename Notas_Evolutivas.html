@@ -1,236 +1,756 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historial de Notas Evolutivas</title>
+
+    <title>Notas Evolutivas - Innova Med</title>
+
     <style>
-        * { box-sizing: border-box; font-family: 'Times New Roman', Times, serif; }
-        body { background-color: #f2f2f2; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; color: #000; }
-        
-        .page { 
-            background: #ffffff; 
-            width: 210mm; 
-            min-height: 297mm; 
-            padding: 18mm 20mm 15mm 20mm; 
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15); 
-            position: relative; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between; 
+
+        /* =====================================================
+           CONFIGURACIÓN GENERAL
+        ===================================================== */
+
+        * {
+            box-sizing: border-box;
         }
-        
-        .content-area { flex-grow: 1; }
-        
-        /* Membrete */
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 15px; }
-        .header-logo { max-width: 160px; max-height: 75px; object-fit: contain; }
-        .header-info { text-align: center; flex-grow: 1; }
-        .header-info h2 { margin: 0; font-size: 14pt; font-weight: bold; text-transform: uppercase; }
-        .header-info h3 { margin: 2px 0 4px 0; font-size: 11pt; font-weight: normal; }
-        .header-info p { margin: 1px 0; font-size: 9.5pt; font-weight: bold; }
-        
-        /* Datos del Paciente */
-        .patient-info { width: 100%; margin-bottom: 12px; font-size: 10pt; line-height: 1.4; }
-        .patient-grid { display: grid; grid-template-columns: 1.2fr 1fr; row-gap: 4px; column-gap: 20px; }
-        .divider { border-bottom: 1.5px solid #000; margin: 10px 0 15px 0; }
-        
-        /* Título */
-        .report-title { text-align: center; font-size: 13pt; font-weight: bold; text-decoration: underline; margin: 10px 0 20px 0; text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        /* Línea de Tiempo de Notas Evolutivas */
-        .timeline-container { position: relative; padding-left: 18px; border-left: 2px solid #333; margin-left: 5px; }
-        
-        .evolution-note { 
-            position: relative; 
-            margin-bottom: 20px; 
-            padding-bottom: 5px; 
+
+        body {
+            font-family: "Times New Roman", Times, serif;
+            background-color: #f4f4f4;
+            color: #000;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .document-container {
+            background-color: white;
+            width: 816px;
+            min-height: 1056px;
+            margin: 20px auto;
+            padding: 30px 60px 70px 60px;
+
+            box-shadow: 0 0 10px rgba(0,0,0,0.10);
+
+            position: relative;
+        }
+
+
+        /* =====================================================
+           MEMBRETE
+        ===================================================== */
+
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 5px;
+        }
+
+        .logo-cell {
+            width: 35%;
+            vertical-align: middle;
+        }
+
+        .logo-cell img {
+            width: 100%;
+            max-width: 240px;
+            height: auto;
+            display: block;
+        }
+
+        .info-cell {
+            width: 65%;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .main-title {
+            font-family: Arial, sans-serif;
+            font-size: 12pt;
+            margin: 0;
+            line-height: 1.0;
+            color: #666666;
+            font-weight: bold;
+        }
+
+        .sub-title {
+            font-family: Arial, sans-serif;
+            font-size: 11pt;
+            margin: 2pt 0;
+            line-height: 1.0;
+            color: #666666;
+        }
+
+        .header-divider {
+            border-top: 2.5pt solid #666666;
+            margin: 5pt 0;
+            width: 100%;
+            height: 1px;
+        }
+
+        .bottom-info {
+            font-family: Arial, sans-serif;
+            font-size: 9pt;
+            line-height: 1.2;
+            color: #666666;
+        }
+
+
+        /* =====================================================
+           FECHA DEL DOCUMENTO
+        ===================================================== */
+
+        .date-row {
+            text-align: right;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            width: 100%;
+        }
+
+
+        /* =====================================================
+           DATOS DEL PACIENTE
+        ===================================================== */
+
+        .patient-data {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3px;
+
+            margin-bottom: 18px;
+
+            font-size: 0.95em;
+
+            border-bottom: 1pt solid #eeeeee;
+
+            padding-bottom: 10px;
+        }
+
+        .patient-data p {
+            margin: 0;
+            padding: 0;
+            line-height: 1.15;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+
+        /* =====================================================
+           TÍTULO
+        ===================================================== */
+
+        .doc-title {
+            text-align: center;
+            font-size: 1.25em;
+            text-decoration: underline;
+            margin: 15px 0 20px 0;
+            font-weight: bold;
+        }
+
+
+        /* =====================================================
+           RESUMEN
+        ===================================================== */
+
+        .summary {
+            font-size: 10.5pt;
+            margin-bottom: 18px;
+            line-height: 1.3;
+        }
+
+
+        /* =====================================================
+           NOTAS EVOLUTIVAS
+        ===================================================== */
+
+        .evolution-item {
+            margin-bottom: 18px;
+
             page-break-inside: avoid;
-        }
-        
-        .evolution-note::before {
-            content: '';
-            position: absolute;
-            left: -24.5px;
-            top: 4px;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background-color: #000;
-            border: 2px solid #fff;
+
+            border-left: 3px solid #666666;
+
+            padding-left: 12px;
         }
 
-        .note-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            background-color: #f4f4f4; 
-            padding: 4px 8px; 
-            border-left: 3px solid #000;
-            margin-bottom: 8px;
-            font-size: 10pt;
-        }
-        
-        .note-date { font-weight: bold; font-size: 10pt; }
-        
-        .note-body { 
-            font-size: 10pt; 
-            line-height: 1.45; 
-            text-align: justify; 
-            white-space: pre-wrap; 
-            padding: 0 4px;
+        .evolution-header {
+            font-family: Arial, sans-serif;
+            font-size: 10.5pt;
+            font-weight: bold;
+
+            margin-bottom: 5px;
         }
 
-        /* Pie de página */
-        .footer { border-top: 1px solid #000; padding-top: 8px; margin-top: 20px; text-align: center; font-size: 8.5pt; line-height: 1.3; color: #222; }
-        .footer p { margin: 2px 0; }
+        .evolution-number {
+            font-weight: bold;
+        }
 
-        /* Botón de Impresión */
-        .action-buttons { margin-top: 25px; margin-bottom: 30px; display: flex; gap: 15px; justify-content: center; }
-        .btn { background-color: #1d5f99; color: #ffffff; border: none; padding: 10px 22px; font-size: 11pt; font-weight: bold; border-radius: 4px; cursor: pointer; font-family: Arial, sans-serif; }
-        .btn:hover { background-color: #14436d; }
-        
+        .evolution-date {
+            font-weight: bold;
+        }
+
+        .evolution-text {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 11pt;
+
+            line-height: 1.35;
+
+            white-space: pre-wrap;
+
+            text-align: left;
+        }
+
+
+        /* =====================================================
+           MENSAJE SI NO HAY NOTAS
+        ===================================================== */
+
+        .no-notes {
+            text-align: center;
+
+            margin-top: 40px;
+
+            font-style: italic;
+
+            color: #666666;
+        }
+
+
+        /* =====================================================
+           BOTONES
+        ===================================================== */
+
+        .button-container {
+            margin: 20px auto;
+
+            display: flex;
+
+            justify-content: center;
+
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+
+            cursor: pointer;
+
+            border: none;
+
+            border-radius: 5px;
+
+            font-weight: bold;
+
+            font-size: 14px;
+        }
+
+        .btn-print {
+            background-color: #27649d;
+            color: white;
+        }
+
+
+        /* =====================================================
+           IMPRESIÓN / PDF
+        ===================================================== */
+
         @media print {
-            body { background: none; padding: 0; }
-            .page { box-shadow: none; width: 100%; padding: 0; min-height: auto; }
-            .action-buttons { display: none !important; }
-            @page { size: A4; margin: 15mm; }
+
+            @page {
+                size: Letter;
+                margin: 0;
+            }
+
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .document-container {
+                width: 100%;
+                min-height: 100%;
+
+                margin: 0;
+
+                padding: 10px 60px 70px 60px;
+
+                box-shadow: none;
+            }
+
+            .evolution-item {
+                page-break-inside: avoid;
+            }
         }
+
     </style>
+
 </head>
+
+
 <body>
 
-    <div class="page" id="diario-content">
-        <div class="content-area">
-            <!-- MEMBRETE -->
-            <div class="header">
-                <div style="width: 160px;">
-                    <img src="https://lh3.googleusercontent.com/d/1BsnSEM4G0mbZg5j9JeOWayP6t4RknZFW" alt="Logo" class="header-logo">
+
+<div id="exportContent" class="document-container">
+
+
+    <!-- =====================================================
+         MEMBRETE
+    ====================================================== -->
+
+    <table class="header-table">
+
+        <tr>
+
+            <td class="logo-cell">
+
+                <img
+                    src="https://lh3.googleusercontent.com/d/1AG-tPiSsSS3lK2I1X3qFj7iWVh0oC1bF"
+                    alt="Logo"
+                >
+
+            </td>
+
+
+            <td class="info-cell">
+
+                <div class="main-title">
+                    DRA. ELIZABETH BALL DE PICÓN
                 </div>
-                <div class="header-info">
-                    <h2 id="field-Titulo">MEDICINA FÍSICA Y REHABILITACIÓN</h2>
-                    <h3 id="field-Subtitulo"></h3>
-                    <p><span id="field-Medico-tratante"></span> <span id="field-Especialidad-Medica"></span></p>
+
+                <div class="sub-title">
+                    Médico Dermatólogo y Dermatopatólogo
                 </div>
-            </div>
 
-            <!-- DATOS DEL PACIENTE -->
-            <div class="patient-info">
-                <div class="patient-grid">
-                    <div><strong>Paciente:</strong> <span id="val-Nombre-y-Apellido"></span></div>
-                    <div><strong>Edad:</strong> <span id="val-Edad"></span></div>
-                    <div><strong>C.I:</strong> <span id="val-Cedula"></span></div>
-                    <div><strong>F / N:</strong> <span id="val-FN"></span></div>
-                    <div><strong>Telf:</strong> <span id="val-Telefono"></span></div>
-                    <div><strong>Aseguradora:</strong> <span id="val-Aseguradora"></span></div>
+                <div class="header-divider"></div>
+
+                <div class="bottom-info">
+
+                    Centro Médico de Caracas.
+                    San Bernardino. Anexo A.
+                    Piso 3. Oficina 375A
+
+                    <br>
+
+                    Tlf: 0212-5517366 /
+                    0424-1273432 /
+                    WhatsApp: 04269198665
+
                 </div>
-            </div>
 
-            <div class="divider"></div>
-            <div class="report-title">HISTORIAL DE NOTAS EVOLUTIVAS</div>
+            </td>
 
-            <!-- CONTENEDOR DE LAS NOTAS -->
-            <div class="timeline-container" id="container-notas"></div>
-        </div>
+        </tr>
 
-        <!-- PIE DE PÁGINA -->
-        <div class="footer" id="sec-Footer">
-            <p id="field-Direccion"></p>
-            <p><span id="field-Telefonos"></span> <span id="field-Correo"></span></p>
-        </div>
+    </table>
+
+
+
+    <!-- =====================================================
+         FECHA
+    ====================================================== -->
+
+    <div class="date-row">
+
+        Fecha:
+        <span id="fecha"></span>
+
     </div>
 
-    <div class="action-buttons">
-        <button class="btn" onclick="window.print()">Imprimir / Guardar en PDF</button>
+
+
+    <!-- =====================================================
+         DATOS DEL PACIENTE
+    ====================================================== -->
+
+    <section class="patient-data">
+
+        <p class="full-width">
+
+            <strong>Paciente:</strong>
+
+            <span id="nombre"></span>
+
+        </p>
+
+
+        <p>
+
+            <strong>C.I:</strong>
+
+            <span id="cedula"></span>
+
+        </p>
+
+
+        <p>
+
+            <strong>Edad:</strong>
+
+            <span id="edad"></span>
+
+        </p>
+
+
+        <p>
+
+            <strong>Telf:</strong>
+
+            <span id="telefono"></span>
+
+        </p>
+
+
+        <p>
+
+            <strong>Ocupación:</strong>
+
+            <span id="ocupacion"></span>
+
+        </p>
+
+
+        <p class="full-width">
+
+            <strong>Dirección:</strong>
+
+            <span id="direccion"></span>
+
+        </p>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         TÍTULO
+    ====================================================== -->
+
+    <h1 class="doc-title">
+
+        NOTAS EVOLUTIVAS
+
+    </h1>
+
+
+
+    <!-- =====================================================
+         RESUMEN
+    ====================================================== -->
+
+    <div class="summary">
+
+        <strong>Resumen de consultas:</strong>
+
+        <span id="cantidadConsultas">0</span>
+
+        consultas registradas.
+
     </div>
 
-    <script>
-        function obtenerParametros() {
-            const params = {};
-            const queryString = window.location.search.substring(1);
-            if (!queryString) return params;
 
-            const pairs = queryString.split("&");
-            for (let i = 0; i < pairs.length; i++) {
-                if (!pairs[i]) continue;
-                const pair = pairs[i].split("=");
-                
-                // Reemplaza signos + por espacios y decodifica la URL
-                const key = decodeURIComponent(pair[0].replace(/\+/g, " ")).trim();
-                const value = decodeURIComponent((pair[1] || "").replace(/\+/g, " ")).trim();
-                
-                params[key] = value;
-            }
-            return params;
+
+    <!-- =====================================================
+         CONTENEDOR DE NOTAS
+    ====================================================== -->
+
+    <div id="evolutionContainer">
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     BOTÓN DE IMPRESIÓN
+====================================================== -->
+
+<div class="button-container no-print">
+
+    <button
+        class="btn btn-print"
+        onclick="window.print()"
+    >
+
+        Imprimir / Guardar PDF
+
+    </button>
+
+</div>
+
+
+
+<script>
+
+
+/* =========================================================
+   OBTENER PARÁMETROS DE LA URL
+========================================================= */
+
+const params = new URLSearchParams(
+    window.location.search
+);
+
+
+
+/* =========================================================
+   FUNCIÓN PARA OBTENER PARÁMETRO
+========================================================= */
+
+function obtenerParametro(nombre) {
+
+    return params.get(nombre) || "";
+
+}
+
+
+
+/* =========================================================
+   ESCAPAR HTML
+   Evita que una nota con caracteres especiales
+   rompa la estructura del documento.
+========================================================= */
+
+function escaparHTML(texto) {
+
+    const div = document.createElement("div");
+
+    div.textContent = texto;
+
+    return div.innerHTML;
+
+}
+
+
+
+/* =========================================================
+   FORMATEAR FECHA
+========================================================= */
+
+function formatearFecha(fechaStr) {
+
+    if (!fechaStr) {
+        return "";
+    }
+
+    /*
+       Intentamos primero fechas tipo:
+       2026-08-18
+    */
+
+    const partes = fechaStr.split("-");
+
+    if (partes.length === 3) {
+
+        return (
+            partes[2] +
+            "/" +
+            partes[1] +
+            "/" +
+            partes[0]
+        );
+
+    }
+
+    return fechaStr;
+
+}
+
+
+
+/* =========================================================
+   CARGAR DATOS DEL PACIENTE
+========================================================= */
+
+document.getElementById("fecha").innerText =
+    formatearFecha(
+        obtenerParametro("fecha")
+    );
+
+
+document.getElementById("nombre").innerText =
+    obtenerParametro("n");
+
+
+document.getElementById("cedula").innerText =
+    obtenerParametro("c");
+
+
+document.getElementById("edad").innerText =
+    obtenerParametro("e");
+
+
+document.getElementById("telefono").innerText =
+    obtenerParametro("tel");
+
+
+document.getElementById("direccion").innerText =
+    obtenerParametro("dir");
+
+
+document.getElementById("ocupacion").innerText =
+    obtenerParametro("ocu");
+
+
+
+/* =========================================================
+   OBTENER NOTAS EVOLUTIVAS
+========================================================= */
+
+const notasParametro =
+    obtenerParametro("notas");
+
+
+
+/* =========================================================
+   CONTENEDOR
+========================================================= */
+
+const evolutionContainer =
+    document.getElementById(
+        "evolutionContainer"
+    );
+
+
+
+/* =========================================================
+   PROCESAR LAS NOTAS
+========================================================= */
+
+if (!notasParametro) {
+
+    evolutionContainer.innerHTML = `
+        <div class="no-notes">
+            No existen notas evolutivas registradas
+            para este paciente.
+        </div>
+    `;
+
+}
+else {
+
+    /*
+       Las notas vienen separadas por:
+       ###
+    */
+
+    const registros =
+        notasParametro.split("###");
+
+
+    /*
+       Eliminar registros vacíos
+    */
+
+    const registrosValidos =
+        registros.filter(
+            registro =>
+                registro.trim() !== ""
+        );
+
+
+    /*
+       Mostrar cantidad
+    */
+
+    document.getElementById(
+        "cantidadConsultas"
+    ).innerText =
+        registrosValidos.length;
+
+
+
+    /*
+       Crear cada consulta
+    */
+
+    registrosValidos.forEach(
+        (registro, index) => {
+
+
+            /*
+               Cada registro tiene:
+
+               FECHA||NOTA
+            */
+
+            const partes =
+                registro.split("||");
+
+
+            const fecha =
+                partes[0] || "";
+
+
+            const nota =
+                partes.slice(1).join("||") || "";
+
+
+
+            /*
+               Crear bloque
+            */
+
+            const item =
+                document.createElement("div");
+
+            item.className =
+                "evolution-item";
+
+
+            item.innerHTML = `
+
+                <div class="evolution-header">
+
+                    Consulta
+                    <span class="evolution-number">
+                        ${index + 1}
+                    </span>
+
+                    —
+                    
+                    <span class="evolution-date">
+
+                        ${escaparHTML(
+                            formatearFecha(fecha)
+                        )}
+
+                    </span>
+
+                </div>
+
+
+                <div class="evolution-text">
+
+                    ${escaparHTML(nota)}
+
+                </div>
+
+            `;
+
+
+            evolutionContainer.appendChild(item);
+
         }
+    );
 
-        function formatearFechaLatina(fechaStr) {
-            if (!fechaStr) return '';
-            let partes = fechaStr.split(/[-/]/);
-            if (partes[0].length === 4) return `${partes[2].padStart(2, '0')}/${partes[1].padStart(2, '0')}/${partes[0]}`;
-            if (partes.length === 3 && partes[2].length === 4) return `${partes[1].padStart(2, '0')}/${partes[0].padStart(2, '0')}/${partes[2]}`;
-            return fechaStr;
-        }
+}
 
-        window.onload = function() {
-            const p = obtenerParametros();
 
-            // Cargar datos de la cabecera
-            if (p['Titulo']) document.getElementById('field-Titulo').innerText = p['Titulo'];
-            if (p['Subtitulo']) document.getElementById('field-Subtitulo').innerText = p['Subtitulo'];
-            if (p['Medico tratante']) document.getElementById('field-Medico-tratante').innerText = p['Medico tratante'];
-            if (p['Especialidad Medica']) document.getElementById('field-Especialidad-Medica').innerText = ' - ' + p['Especialidad Medica'];
 
-            // Datos del Paciente
-            document.getElementById('val-Nombre-y-Apellido').innerText = p['Nombre y Apellido'] || p['Nombre+y+Apellido'] || '';
-            document.getElementById('val-Cedula').innerText = p['Cedula'] || '';
-            document.getElementById('val-Edad').innerText = p['Edad'] || '';
-            document.getElementById('val-FN').innerText = p['FN'] ? formatearFechaLatina(p['FN']) : (p['F / N'] ? formatearFechaLatina(p['F / N']) : '');
-            document.getElementById('val-Telefono').innerText = p['Telefono'] || '';
-            document.getElementById('val-Aseguradora').innerText = p['Aseguradora'] || '';
-            
-            if (p['Direccion']) document.getElementById('field-Direccion').innerText = p['Direccion'];
-            if (p['Numero de telefono principal']) document.getElementById('field-Telefonos').innerText = p['Numero de telefono principal'] + ' | ';
-            if (p['Correo electronico']) document.getElementById('field-Correo').innerText = p['Correo electronico'];
+</script>
 
-            // Procesamiento de las Notas Evolutivas
-            const container = document.getElementById('container-notas');
-            const notasRaw = p['NotasEvolutivas'] || p['Notas+Evolutivas'] || p['NotasEvolutivasID'] || '';
 
-            if (notasRaw) {
-                // Detectar si vienen separadas por || o por comas
-                const separadorBloques = notasRaw.includes('||') ? '||' : ',';
-                const bloques = notasRaw.split(separadorBloques);
-                let htmlNotas = '';
-
-                bloques.forEach(b => {
-                    if (!b.trim()) return;
-
-                    let fecha = '';
-                    let texto = b.trim();
-
-                    // Separar Fecha y Contenido de la Nota por ::
-                    if (b.includes('::')) {
-                        const partes = b.split('::');
-                        fecha = partes[0] ? partes[0].trim() : '';
-                        texto = partes[1] ? partes[1].trim() : '';
-                    }
-
-                    htmlNotas += `
-                        <div class="evolution-note">
-                            <div class="note-header">
-                                <span class="note-date">📅 Fecha: ${fecha ? formatearFechaLatina(fecha) : 'Sin fecha'}</span>
-                            </div>
-                            <div class="note-body">${texto}</div>
-                        </div>
-                    `;
-                });
-
-                container.innerHTML = htmlNotas;
-            } else {
-                container.innerHTML = '<p style="font-style:italic; font-size:10pt; text-align:center;">No hay notas evolutivas registradas para este paciente.</p>';
-            }
-        };
-    </script>
 </body>
+
 </html>
