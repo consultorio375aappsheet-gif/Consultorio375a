@@ -188,33 +188,42 @@
             document.getElementById('field-Correo').innerText = p['Correo electronico'] || '';
 
             // Renderizado de las Notas Evolutivas
-            const container = document.getElementById('container-notas');
+            // Reemplaza esta sección dentro del window.onload en tu HTML
+const container = document.getElementById('container-notas');
 
-            if (p['NotasEvolutivas']) {
-                const bloques = p['NotasEvolutivas'].split('||');
-                let htmlNotas = '';
+if (p['NotasEvolutivas']) {
+    // Separamos por el delimitador ||
+    const bloques = p['NotasEvolutivas'].split('||');
+    let htmlNotas = '';
 
-                bloques.forEach(b => {
-                    if (!b.trim()) return;
-                    const partes = b.split('::');
-                    const fecha = partes[0] ? partes[0].trim() : '';
-                    const texto = partes[1] ? partes[1].trim() : b.trim();
+    bloques.forEach(b => {
+        if (!b.trim()) return;
+        
+        let fecha = '';
+        let texto = b.trim();
 
-                    htmlNotas += `
-                        <div class="evolution-note">
-                            <div class="note-header">
-                                <span class="note-date">📅 Fecha: ${formatearFechaLatina(fecha)}</span>
-                            </div>
-                            <div class="note-body">${texto}</div>
-                        </div>
-                    `;
-                });
+        // Si la cadena contiene el separador ::
+        if (b.includes('::')) {
+            const partes = b.split('::');
+            fecha = partes[0] ? partes[0].trim() : '';
+            texto = partes[1] ? partes[1].trim() : '';
+        }
 
-                container.innerHTML = htmlNotas;
-            } else {
-                container.innerHTML = '<p style="font-style:italic; font-size:10pt;">No hay notas evolutivas registradas para este paciente.</p>';
-            }
-        };
-    </script>
+        htmlNotas += `
+            <div class="evolution-note">
+                <div class="note-header">
+                    <span class="note-date">📅 Fecha: ${fecha ? formatearFechaLatina(fecha) : 'Sin fecha'}</span>
+                </div>
+                <div class="note-body">${texto}</div>
+            </div>
+        `;
+    });
+
+    container.innerHTML = htmlNotas;
+} else {
+    container.innerHTML = '<p style="font-style:italic; font-size:10pt;">No hay notas evolutivas registradas para este paciente.</p>';
+}
+            
+            </script>
 </body>
 </html>
