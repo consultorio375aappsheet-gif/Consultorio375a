@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diario de Notas Evolutivas</title>
+    <title>Historial de Notas Evolutivas</title>
     <style>
         * { box-sizing: border-box; font-family: 'Times New Roman', Times, serif; }
         body { background-color: #f2f2f2; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; color: #000; }
@@ -32,29 +32,29 @@
         
         /* Datos del Paciente */
         .patient-info { width: 100%; margin-bottom: 12px; font-size: 10pt; line-height: 1.4; }
-        .patient-grid { display: grid; grid-template-columns: 1.2fr 1fr; row-gap: 3px; column-gap: 20px; }
+        .patient-grid { display: grid; grid-template-columns: 1.2fr 1fr; row-gap: 4px; column-gap: 20px; }
         .divider { border-bottom: 1.5px solid #000; margin: 10px 0 15px 0; }
         
         /* Título */
         .report-title { text-align: center; font-size: 13pt; font-weight: bold; text-decoration: underline; margin: 10px 0 20px 0; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        /* Línea de Tiempo de Notas */
+        /* Línea de Tiempo de Notas Evolutivas */
         .timeline-container { position: relative; padding-left: 18px; border-left: 2px solid #333; margin-left: 5px; }
         
         .evolution-note { 
             position: relative; 
             margin-bottom: 20px; 
             padding-bottom: 5px; 
-            page-break-inside: avoid; /* Evita cortes feos al imprimir en PDF */
+            page-break-inside: avoid;
         }
         
         .evolution-note::before {
             content: '';
             position: absolute;
             left: -24.5px;
-            top: 2px;
-            width: 11px;
-            height: 11px;
+            top: 4px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             background-color: #000;
             border: 2px solid #fff;
@@ -67,11 +67,11 @@
             background-color: #f4f4f4; 
             padding: 4px 8px; 
             border-left: 3px solid #000;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             font-size: 10pt;
         }
         
-        .note-date { font-weight: bold; font-size: 10.5pt; }
+        .note-date { font-weight: bold; font-size: 10pt; }
         
         .note-body { 
             font-size: 10pt; 
@@ -127,7 +127,7 @@
             </div>
 
             <div class="divider"></div>
-            <div class="report-title">Historial de Notas Evolutivas</div>
+            <div class="report-title">HISTORIAL DE NOTAS EVOLUTIVAS</div>
 
             <!-- CONTENEDOR DE LAS NOTAS -->
             <div class="timeline-container" id="container-notas"></div>
@@ -136,7 +136,7 @@
         <!-- PIE DE PÁGINA -->
         <div class="footer" id="sec-Footer">
             <p id="field-Direccion"></p>
-            <p><span id="field-Telefonos"></span> | <span id="field-Correo"></span></p>
+            <p><span id="field-Telefonos"></span> <span id="field-Correo"></span></p>
         </div>
     </div>
 
@@ -148,12 +148,17 @@
         function obtenerParametros() {
             const params = {};
             const queryString = window.location.search.substring(1);
+            if (!queryString) return params;
+
             const pairs = queryString.split("&");
             for (let i = 0; i < pairs.length; i++) {
                 if (!pairs[i]) continue;
                 const pair = pairs[i].split("=");
+                
+                // Reemplaza signos + por espacios y decodifica la URL
                 const key = decodeURIComponent(pair[0].replace(/\+/g, " ")).trim();
                 const value = decodeURIComponent((pair[1] || "").replace(/\+/g, " ")).trim();
+                
                 params[key] = value;
             }
             return params;
@@ -177,53 +182,55 @@
             if (p['Especialidad Medica']) document.getElementById('field-Especialidad-Medica').innerText = ' - ' + p['Especialidad Medica'];
 
             // Datos del Paciente
-            document.getElementById('val-Nombre-y-Apellido').innerText = p['Nombre y Apellido'] || '';
+            document.getElementById('val-Nombre-y-Apellido').innerText = p['Nombre y Apellido'] || p['Nombre+y+Apellido'] || '';
             document.getElementById('val-Cedula').innerText = p['Cedula'] || '';
             document.getElementById('val-Edad').innerText = p['Edad'] || '';
             document.getElementById('val-FN').innerText = p['FN'] ? formatearFechaLatina(p['FN']) : (p['F / N'] ? formatearFechaLatina(p['F / N']) : '');
             document.getElementById('val-Telefono').innerText = p['Telefono'] || '';
             document.getElementById('val-Aseguradora').innerText = p['Aseguradora'] || '';
-            document.getElementById('field-Direccion').innerText = p['Direccion'] || '';
-            document.getElementById('field-Telefonos').innerText = p['Numero de telefono principal'] || '';
-            document.getElementById('field-Correo').innerText = p['Correo electronico'] || '';
-
-            // Renderizado de las Notas Evolutivas
-            // Reemplaza esta sección dentro del window.onload en tu HTML
-const container = document.getElementById('container-notas');
-
-if (p['NotasEvolutivas']) {
-    // Separamos por el delimitador ||
-    const bloques = p['NotasEvolutivas'].split('||');
-    let htmlNotas = '';
-
-    bloques.forEach(b => {
-        if (!b.trim()) return;
-        
-        let fecha = '';
-        let texto = b.trim();
-
-        // Si la cadena contiene el separador ::
-        if (b.includes('::')) {
-            const partes = b.split('::');
-            fecha = partes[0] ? partes[0].trim() : '';
-            texto = partes[1] ? partes[1].trim() : '';
-        }
-
-        htmlNotas += `
-            <div class="evolution-note">
-                <div class="note-header">
-                    <span class="note-date">📅 Fecha: ${fecha ? formatearFechaLatina(fecha) : 'Sin fecha'}</span>
-                </div>
-                <div class="note-body">${texto}</div>
-            </div>
-        `;
-    });
-
-    container.innerHTML = htmlNotas;
-} else {
-    container.innerHTML = '<p style="font-style:italic; font-size:10pt;">No hay notas evolutivas registradas para este paciente.</p>';
-}
             
-            </script>
+            if (p['Direccion']) document.getElementById('field-Direccion').innerText = p['Direccion'];
+            if (p['Numero de telefono principal']) document.getElementById('field-Telefonos').innerText = p['Numero de telefono principal'] + ' | ';
+            if (p['Correo electronico']) document.getElementById('field-Correo').innerText = p['Correo electronico'];
+
+            // Procesamiento de las Notas Evolutivas
+            const container = document.getElementById('container-notas');
+            const notasRaw = p['NotasEvolutivas'] || p['Notas+Evolutivas'] || p['NotasEvolutivasID'] || '';
+
+            if (notasRaw) {
+                // Detectar si vienen separadas por || o por comas
+                const separadorBloques = notasRaw.includes('||') ? '||' : ',';
+                const bloques = notasRaw.split(separadorBloques);
+                let htmlNotas = '';
+
+                bloques.forEach(b => {
+                    if (!b.trim()) return;
+
+                    let fecha = '';
+                    let texto = b.trim();
+
+                    // Separar Fecha y Contenido de la Nota por ::
+                    if (b.includes('::')) {
+                        const partes = b.split('::');
+                        fecha = partes[0] ? partes[0].trim() : '';
+                        texto = partes[1] ? partes[1].trim() : '';
+                    }
+
+                    htmlNotas += `
+                        <div class="evolution-note">
+                            <div class="note-header">
+                                <span class="note-date">📅 Fecha: ${fecha ? formatearFechaLatina(fecha) : 'Sin fecha'}</span>
+                            </div>
+                            <div class="note-body">${texto}</div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = htmlNotas;
+            } else {
+                container.innerHTML = '<p style="font-style:italic; font-size:10pt; text-align:center;">No hay notas evolutivas registradas para este paciente.</p>';
+            }
+        };
+    </script>
 </body>
 </html>
